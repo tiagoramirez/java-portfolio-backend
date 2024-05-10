@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "main" ]
 
 jobs:
 
@@ -58,7 +58,12 @@ jobs:
     steps:
       - name: Check branches
         run: |
-          if [ ${{ github.head_ref }} != "develop" ] && [ ${{ github.base_ref }} == "main" ]; then
-            echo "Merge requests to main branch are only allowed from develop branch."
-            exit 1
-          fi
+            branch_regex_release='^release/[0-9]+\.[0-9]+\.[0-9]+$'
+            branch_regex_feature='^feature/.+$'
+            if [[ ! ${{ github.head_ref }} =~ $branch_regex_release ]] && [[ ${{ github.base_ref }} == "main" ]]; then
+                echo "Merge requests to main branch are only allowed from release/* branches with semantic versioning."
+                exit 1
+            elif [[ ! ${{ github.head_ref }} =~ $branch_regex_feature ]] && [[ ${{ github.base_ref }} == "develop" ]]; then
+                echo "Merge requests to develop branch are only allowed from feature/* branches."
+                exit 1
+            fi
