@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      checks: write
 
     steps:
     - uses: actions/checkout@v4
@@ -39,12 +40,12 @@ jobs:
     - name: JaCoCo Code Coverage Report
       uses: PavanMudigonda/jacoco-reporter@v5.0
       with:
-          coverage_results_path: build/reports/jacoco/report.xml
-          coverage_report_name: Coverage
-          coverage_report_title: JaCoCo
-          minimum_coverage: 90
-          fail_below_threshold: true
-          publish_only_summary: true
+        coverage_results_path: build/reports/jacoco/report.xml
+        coverage_report_name: Coverage
+        coverage_report_title: JaCoCo
+        minimum_coverage: 90
+        fail_below_threshold: true
+        publish_only_summary: true          
 
   dependency-submission:
 
