@@ -12,7 +12,7 @@
 
 ## Checklist:
 
-- [ ] New and existing unit tests pass locally with my changes
+- [ ] New and existing tests pass locally with my changes
 - [ ] My code follows the style guidelines of this project
 - [ ] I have commented my code only in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
