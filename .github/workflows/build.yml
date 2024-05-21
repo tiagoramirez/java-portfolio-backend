@@ -5,11 +5,27 @@ on:
     branches: [ "develop", "main" ]
 
 jobs:
+  check-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branches
+        run: |
+            branch_regex_release='^release/[0-9]+\.[0-9]+\.[0-9]+$'
+            branch_regex_feature='^feature/.+$'
+            if [[ ! ${{ github.head_ref }} =~ $branch_regex_release ]] && [[ ${{ github.base_ref }} == "main" ]]; then
+                echo "Merge requests to main branch are only allowed from release/* branches with semantic versioning."
+                exit 1
+            elif [[ ! ${{ github.head_ref }} =~ $branch_regex_feature ]] && [[ ${{ github.base_ref }} == "develop" ]]; then
+                echo "Merge requests to develop branch are only allowed from feature/* branches."
+                exit 1
+            fi
 
-  build:
+  build-and-test:
+    needs: check-branches
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      checks: write
 
     steps:
     - uses: actions/checkout@v4
@@ -34,7 +50,17 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
-        path: build/jacocoHtml/
+        path: build/reports/jacoco/test/html
+
+    - name: JaCoCo Code Coverage Report
+      uses: PavanMudigonda/jacoco-reporter@v5.0
+      with:
+        coverage_results_path: build/reports/jacoco/report.xml
+        coverage_report_name: Coverage
+        coverage_report_title: JaCoCo
+        minimum_coverage: 90
+        fail_below_threshold: true
+        publish_only_summary: true          
 
   dependency-submission:
 
@@ -52,18 +78,3 @@ jobs:
 
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5
-    
-  check-branches:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check branches
-        run: |
-            branch_regex_release='^release/[0-9]+\.[0-9]+\.[0-9]+$'
-            branch_regex_feature='^feature/.+$'
-            if [[ ! ${{ github.head_ref }} =~ $branch_regex_release ]] && [[ ${{ github.base_ref }} == "main" ]]; then
-                echo "Merge requests to main branch are only allowed from release/* branches with semantic versioning."
-                exit 1
-            elif [[ ! ${{ github.head_ref }} =~ $branch_regex_feature ]] && [[ ${{ github.base_ref }} == "develop" ]]; then
-                echo "Merge requests to develop branch are only allowed from feature/* branches."
-                exit 1
-            fi
