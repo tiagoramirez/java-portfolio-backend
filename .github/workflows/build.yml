@@ -34,7 +34,17 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
-        path: build/jacocoHtml/
+        path: build/reports/jacoco/test/html
+
+    - name: JaCoCo Code Coverage Report
+      uses: PavanMudigonda/jacoco-reporter@v5.0
+      with:
+          coverage_results_path: build/reports/jacoco/report.xml
+          coverage_report_name: Coverage
+          coverage_report_title: JaCoCo
+          minimum_coverage: 90
+          fail_below_threshold: true
+          publish_only_summary: true
 
   dependency-submission:
 
