@@ -48,7 +48,8 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                "com/tiagoramirez/portfolio/PortfolioV3Application*"
+                "com/tiagoramirez/portfolio/PortfolioV3Application*",
+                "com/tiagoramirez/portfolio/exception/**"
             ])
         }))
     }
