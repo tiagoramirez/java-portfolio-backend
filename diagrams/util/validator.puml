@@ -1,0 +1,32 @@
+@startuml utilities
+
+interface IValidator {
+    boolean isValid(String value)
+}
+
+class PasswordValidator {
+    + boolean isValid(String value)
+}
+
+class BadWordsValidator {
+    + boolean isValid(String value)
+}
+
+class LinkValidator {
+    - BadWordsValidator badWordsValidator
+    + boolean isValid(String value)
+}
+
+class UsernameValidator {
+    - BadWordsValidator badWordsValidator
+    + boolean isValid(String value)
+}
+
+IValidator <|.. LinkValidator
+IValidator <|.. UsernameValidator
+IValidator <|.. PasswordValidator
+IValidator <|.. BadWordsValidator
+BadWordsValidator <-- LinkValidator
+BadWordsValidator <-- UsernameValidator
+
+@enduml
